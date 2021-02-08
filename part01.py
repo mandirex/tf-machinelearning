@@ -10,7 +10,7 @@ if __name__ == "__main__":
     # x in, y out. Split into separate test and train data.
     (x_train, y_train), (x_test, y_test) = mnist.load_data()
     
-    # Normalize pixel data from 0-255 to 0.0 - 1.0
+    # Normalize pixel data from 0 - 255 to 0.0 - 1.0
     x_train, x_test = x_train / 255.0, x_test / 255.0
 
     model = tf.keras.models.Sequential([
@@ -20,5 +20,15 @@ if __name__ == "__main__":
         tf.keras.layers.Dense(10) # 10 output neurons.
     ])
 
+    # This function prints usefull information about the model
+    print(model.summary())
 
-    print("testing")
+    # Logits is the vector of raw output (or predictions) from the model
+    loss_fn = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
+
+    # We now compile the model using the adam optimizer and the loss_fn loss function.
+    # We choose to track the metric (accuracy)
+    model.compile(optimizer="adam", loss=loss_fn, metrics=["accuracy"])
+
+    # adjust the model parameters during 5 epochs (the model will see all the data 5 times)
+    model.fit(x_train, y_train, epochs=5)
